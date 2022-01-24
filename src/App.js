@@ -1,24 +1,68 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
+import Slide from './Slide';
+
+const pics = [
+  './images/photo-1.jpg',
+  './images/photo-2.jpg',
+  './images/photo-3.jpg',
+  './images/photo-4.jpg',
+  './images/photo-5.jpg',
+  './images/photo-6.jpg',
+  './images/photo-7.jpg',
+];
 
 function App() {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (idx < 0) {
+      setIdx(pics.length - 1);
+    }
+
+    if (idx > pics.length - 1) {
+      setIdx(0);
+    }
+
+    const i = setInterval(() => {
+      setIdx(idx + 1);
+    }, 2000);
+
+    return () => {
+      clearInterval(i);
+    };
+  }, [idx]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <div className="container">
+        {pics.map((pic, i) => {
+          let place = 'next';
+
+          if (i === idx) {
+            place = 'active';
+          }
+
+          if (i === idx - 1 || (idx === 0 && i === pics.length - 1)) {
+            place = 'last';
+          }
+
+          return <Slide key={i} pic={pic} place={place} />;
+        })}
+      </div>
+      <div className="btns">
+        <button
+          className="prev-btn"
+          onClick={() => {
+            setIdx(idx - 1);
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          prev
+        </button>
+        <button className="next-btn" onClick={() => setIdx(idx + 1)}>
+          next
+        </button>
+      </div>
+    </>
   );
 }
 
